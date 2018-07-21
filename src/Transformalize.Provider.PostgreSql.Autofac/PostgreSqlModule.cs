@@ -29,7 +29,7 @@ using Transformalize.Providers.Ado;
 using Transformalize.Transforms.System;
 
 namespace Transformalize.Providers.PostgreSql.Autofac {
-    public class MySqlModule : Module {
+    public class PostgreSqlModule : Module {
 
         private const string Provider = "postgresql";
 

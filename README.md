@@ -69,5 +69,5 @@ This reads 10 rows of bogus data from a PostgreSql database:
 
 ### Notes
 
-- Tested with PostgreSql ?.?
-- You have to provider `user` and `password`
+- Tested with PostgreSql 9.6
+- You have to make a `junk` database and set `user` and `password`

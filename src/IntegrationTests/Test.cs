@@ -32,7 +32,7 @@ namespace IntegrationTests {
     public class Test {
 
         [TestMethod]
-        [Ignore("You have to update user and password before running")]
+        [Ignore("You need Postgres running with a Junk database, and update user and password before running.")]
         public void Write() {
             const string xml = @"<add name='Bogus' mode='init'>
   <parameters>
@@ -40,7 +40,7 @@ namespace IntegrationTests {
   </parameters>
   <connections>
     <add name='input' provider='bogus' seed='1' />
-    <add name='output' provider='postgres' database='junk' user='*' password='*' />
+    <add name='output' provider='postgresql' database='Junk' user='postgres' password='*' />
   </connections>
   <entities>
     <add name='Contact' size='@[Size]'>
@@ -55,7 +55,7 @@ namespace IntegrationTests {
   </entities>
 </add>";
             using (var outer = new ConfigurationContainer().CreateScope(xml)) {
-                using (var inner = new TestContainer(new BogusModule(), new MySqlModule()).CreateScope(outer, new ConsoleLogger(LogLevel.Debug))) {
+                using (var inner = new TestContainer(new BogusModule(), new PostgreSqlModule()).CreateScope(outer, new ConsoleLogger(LogLevel.Debug))) {
 
                     var process = inner.Resolve<Process>();
 
@@ -68,11 +68,11 @@ namespace IntegrationTests {
         }
 
         [TestMethod]
-        [Ignore("You have to update user and password before running")]
+        [Ignore("You need Postgres running and have to update user and password before running.")]
         public void Read() {
             const string xml = @"<add name='Bogus'>
   <connections>
-    <add name='input' provider='postgres' database='junk' user='*' password='*' />
+    <add name='input' provider='postgresql' database='Junk' user='postgres' password='*' />
     <add name='output' provider='internal' />
   </connections>
   <entities>
@@ -91,7 +91,7 @@ namespace IntegrationTests {
   </entities>
 </add>";
             using (var outer = new ConfigurationContainer().CreateScope(xml)) {
-                using (var inner = new TestContainer(new MySqlModule()).CreateScope(outer, new ConsoleLogger(LogLevel.Debug))) {
+                using (var inner = new TestContainer(new PostgreSqlModule()).CreateScope(outer, new ConsoleLogger(LogLevel.Debug))) {
 
                     var process = inner.Resolve<Process>();
 

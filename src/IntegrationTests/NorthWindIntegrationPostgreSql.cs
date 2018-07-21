@@ -49,7 +49,7 @@ namespace IntegrationTests {
         }
 
         [TestMethod]
-        [Ignore("Needs local sql server and postgres databases.")]
+        [Ignore("Hasn't been tested yet.  Also, needs local sql server and postgres databases.")]
         public void Integration() {
 
             // CORRECT DATA AND INITIAL LOAD
