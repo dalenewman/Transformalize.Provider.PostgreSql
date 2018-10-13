@@ -10,7 +10,7 @@
 
   <connections>
     <add name="input" connection-string="Server=localhost;Database=NorthWind;Trusted_Connection=True;" />
-    <add name="output" provider="postgresql" server="localhost" database="northwindstar" user="postgres" password="*" />
+    <add name="output" provider="postgresql" server="localhost" database="northwindstar" user="postgres" password="devdev1!" />
   </connections>
 
   <maps>

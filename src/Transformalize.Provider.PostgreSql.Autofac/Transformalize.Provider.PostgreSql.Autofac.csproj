@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Transformalize.Providers.PostgreSql.Autofac</RootNamespace>
     <AssemblyName>Transformalize.Provider.PostgreSql.Autofac</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -43,26 +44,30 @@
     <Reference Include="Cfg.Net.Shorthand, Version=0.2.11.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Cfg-NET.Shorthand.0.2.11\lib\portable-net45+win8+wpa81+wp8\Cfg.Net.Shorthand.dll</HintPath>
     </Reference>
-    <Reference Include="CfgNet, Version=0.10.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Cfg-NET.0.10.2\lib\net452\CfgNet.dll</HintPath>
+    <Reference Include="CfgNet, Version=0.10.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Cfg-NET.0.10.4\lib\net462\CfgNet.dll</HintPath>
     </Reference>
-    <Reference Include="Dapper, Version=1.50.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Dapper.1.50.4\lib\net451\Dapper.dll</HintPath>
+    <Reference Include="Dapper, Version=1.50.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Dapper.1.50.5\lib\net451\Dapper.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="Transformalize, Version=0.3.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Transformalize.0.3.4-beta\lib\net452\Transformalize.dll</HintPath>
+    <Reference Include="Transformalize, Version=0.3.8.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Transformalize.0.3.8-beta\lib\net462\Transformalize.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Container.Autofac, Version=0.3.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Transformalize.Container.Autofac.0.3.4-beta\lib\net452\Transformalize.Container.Autofac.dll</HintPath>
+    <Reference Include="Transformalize.Container.Autofac, Version=0.3.9.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Transformalize.Container.Autofac.0.3.9-beta\lib\net452\Transformalize.Container.Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Provider.Ado, Version=0.3.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Transformalize.Provider.Ado.0.3.5-beta\lib\net452\Transformalize.Provider.Ado.dll</HintPath>
+    <Reference Include="Transformalize.Provider.Ado, Version=0.3.10.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Transformalize.Provider.Ado.0.3.10-beta\lib\net452\Transformalize.Provider.Ado.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -70,18 +75,24 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Transformalize.Provider.PostgreSql\Transformalize.Provider.PostgreSql.csproj">
       <Project>{4ed1e259-756a-40b8-9800-f563b59e0206}</Project>
       <Name>Transformalize.Provider.PostgreSql</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>set f="$(SolutionDir)..\Transformalize\Pipeline.Command\bin\x64\$(ConfigurationName)\plugins"
+    <PostBuildEvent>set f="$(SolutionDir)..\Transformalize\Pipeline.Command\plugins"
 
-if exist %25f%25 copy /Y "$(TargetDir)*.*" "%25f%25"</PostBuildEvent>
+if exist %25f%25 copy /Y "$(TargetDir)Dapper.dll" "%25f%25"
+if exist %25f%25 copy /Y "$(TargetDir)Npgsql.dll" "%25f%25"
+if exist %25f%25 copy /Y "$(TargetDir)System.Runtime.CompilerServices.Unsafe.dll" "%25f%25"
+if exist %25f%25 copy /Y "$(TargetDir)System.Threading.Tasks.Extensions.dll" "%25f%25"
+if exist %25f%25 copy /Y "$(TargetDir)System.ValueTuple.dll" "%25f%25"
+if exist %25f%25 copy /Y "$(TargetDir)Transformalize.Provider.PostgreSql.dll" "%25f%25"
+if exist %25f%25 copy /Y "$(TargetDir)Transformalize.Provider.PostgreSql.Autofac.dll" "%25f%25"</PostBuildEvent>
   </PropertyGroup>
 </Project>
