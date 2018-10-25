@@ -1,13 +1,12 @@
-﻿<add name="NorthWind" mode="@(Mode)" >
+﻿<add name="NorthWind" enabled="true" mode="@(Mode)" >
 
   <parameters>
     <add name="Mode" value="default" />
-    <add name="PW" value="*" />
   </parameters>
 
   <connections>
     <add name="input" connection-string="Server=localhost;Database=NorthWind;Trusted_Connection=True;" />
-    <add name="output" provider="postgresql" server="localhost" database="northwindstar" user="postgres" password="@(PW)" />
+    <add name="output" provider="postgresql" server="localhost" database="northwindstar" user="postgres" password="devdev1!" />
   </connections>
 
   <maps>

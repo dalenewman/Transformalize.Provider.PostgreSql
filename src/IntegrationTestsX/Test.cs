@@ -32,6 +32,7 @@ namespace IntegrationTests {
     public class Test {
 
         [TestMethod]
+        //[Ignore("You need Postgres running with a Junk database, and update user and password before running.")]
         public void Write() {
             const string xml = @"<add name='Bogus' mode='init'>
   <parameters>
@@ -39,7 +40,7 @@ namespace IntegrationTests {
   </parameters>
   <connections>
     <add name='input' provider='bogus' seed='1' />
-    <add name='output' provider='postgresql' database='Junk' user='postgres' password='*' />
+    <add name='output' provider='postgresql' database='Junk' user='postgres' password='devdev1!' />
   </connections>
   <entities>
     <add name='Contact' size='@[Size]'>
@@ -67,6 +68,7 @@ namespace IntegrationTests {
         }
 
         [TestMethod]
+        //[Ignore("You need Postgres running and have to update user and password before running.")]
         public void Read() {
             const string xml = @"<add name='Bogus'>
   <connections>
