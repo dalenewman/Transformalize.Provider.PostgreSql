@@ -22,24 +22,28 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Transformalize.Configuration;
 using Transformalize.Containers.Autofac;
 using Transformalize.Contracts;
+using Transformalize.Logging;
 using Transformalize.Providers.Bogus.Autofac;
-using Transformalize.Providers.Console;
 using Transformalize.Providers.PostgreSql.Autofac;
 
-namespace IntegrationTests {
+namespace Test {
 
-    [TestClass]
-    public class Test {
+   [TestClass]
+   public class Test
+   {
 
-        [TestMethod]
-        public void Write() {
-            const string xml = @"<add name='Bogus' mode='init'>
+      private const string Pw = "Wr0ngP@$$w0rd!";
+
+      [TestMethod]
+      public void Write() {
+         var xml = $@"<add name='Bogus' mode='init'>
   <parameters>
     <add name='Size' type='int' value='1000' />
+    <add name='pw' value='*' />
   </parameters>
   <connections>
     <add name='input' provider='bogus' seed='1' />
-    <add name='output' provider='postgresql' database='Junk' user='postgres' password='*' />
+    <add name='output' provider='postgresql' database='Junk' user='postgres' password='{Pw}' />
   </connections>
   <entities>
     <add name='Contact' size='@[Size]'>
@@ -53,24 +57,26 @@ namespace IntegrationTests {
     </add>
   </entities>
 </add>";
-            using (var outer = new ConfigurationContainer().CreateScope(xml)) {
-                using (var inner = new TestContainer(new BogusModule(), new PostgreSqlModule()).CreateScope(outer, new ConsoleLogger(LogLevel.Debug))) {
+         using (var outer = new ConfigurationContainer().CreateScope(xml)) {
+            var process = outer.Resolve<Process>();
+            using (var inner = new TestContainer(new BogusModule(), new PostgreSqlModule()).CreateScope(process, new DebugLogger(LogLevel.Debug))) {
 
-                    var process = inner.Resolve<Process>();
+               var controller = inner.Resolve<IProcessController>();
+               controller.Execute();
 
-                    var controller = inner.Resolve<IProcessController>();
-                    controller.Execute();
-
-                    Assert.AreEqual(process.Entities.First().Inserts, (uint)1000);
-                }
+               Assert.AreEqual(process.Entities.First().Inserts, (uint)1000);
             }
-        }
+         }
+      }
 
-        [TestMethod]
-        public void Read() {
-            const string xml = @"<add name='Bogus'>
+      [TestMethod]
+      public void Read() {
+         var xml = $@"<add name='Bogus'>
+   <parameters>
+      <add name='pw' value='*' />
+   </parameters>
   <connections>
-    <add name='input' provider='postgresql' database='Junk' user='postgres' password='*' />
+    <add name='input' provider='postgresql' database='Junk' user='postgres' password='{Pw}' />
     <add name='output' provider='internal' />
   </connections>
   <entities>
@@ -88,20 +94,19 @@ namespace IntegrationTests {
     </add>
   </entities>
 </add>";
-            using (var outer = new ConfigurationContainer().CreateScope(xml)) {
-                using (var inner = new TestContainer(new PostgreSqlModule()).CreateScope(outer, new ConsoleLogger(LogLevel.Debug))) {
+         using (var outer = new ConfigurationContainer().CreateScope(xml)) {
+            var process = outer.Resolve<Process>();
 
-                    var process = inner.Resolve<Process>();
+            using (var inner = new TestContainer(new PostgreSqlModule()).CreateScope(process, new DebugLogger(LogLevel.Debug))) {
 
-                    var controller = inner.Resolve<IProcessController>();
-                    controller.Execute();
-                    var rows = process.Entities.First().Rows;
+               var controller = inner.Resolve<IProcessController>();
+               controller.Execute();
+               var rows = process.Entities.First().Rows;
 
-                    Assert.AreEqual(10, rows.Count);
+               Assert.AreEqual(10, rows.Count);
 
-
-                }
             }
-        }
-    }
+         }
+      }
+   }
 }

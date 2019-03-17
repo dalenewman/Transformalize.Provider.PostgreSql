@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>Transformalize.Provider.PostgreSql</id>
-    <version>0.3.5-beta</version>
+    <version>0.4.0-beta</version>
     <title>Transformalize Transform using PostgreSql</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
@@ -10,13 +10,13 @@
     <projectUrl>https://github.com/dalenewman/Transformalize.Provider.PostgreSql</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Transformalize Transform using PostgreSql</description>
-    <releaseNotes>moved to plug-in</releaseNotes>
-    <copyright>Copyright 2018</copyright>
+    <releaseNotes>updated dependencies</releaseNotes>
+    <copyright>Copyright 2018-2019</copyright>
     <tags>etl</tags>
     <dependencies>
       <group targetFramework="net452">
-        <dependency id="Transformalize.Provider.Ado" version="0.3.8-beta" />
-        <dependency id="Npgsql" version="4.0.2" />
+        <dependency id="Transformalize.Provider.Ado" version="0.4.6-beta" />
+        <dependency id="Npgsql" version="4.0.5" />
       </group>
     </dependencies>
   </metadata>

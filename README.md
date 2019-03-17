@@ -1,8 +1,7 @@
 ### Overview
 
-This adds an `PostgreSql` provider to Transformalize using [Npgsql](https://www.nuget.org/packages/Npgsql).  It is a plug-in compatible with Transformalize 0.3.5-beta.
-
-Build the Autofac project and put it's output into Transformalize's *plugins* folder.
+This adds an `PostgreSql` provider to Transformalize using [Npgsql](https://www.nuget.org/packages/Npgsql).  
+It is a plug-in that ships with Transformalize CLI.
 
 ### Write Usage
 
