@@ -16,21 +16,20 @@
 // limitations under the License.
 #endregion
 
-using System.Linq;
 using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Containers.Autofac;
 using Transformalize.Contracts;
-using Transformalize.Logging;
 using Transformalize.Providers.Bogus.Autofac;
+using Transformalize.Providers.Console;
 using Transformalize.Providers.PostgreSql.Autofac;
 
 namespace Test {
 
    [TestClass]
-   public class Test
-   {
+   public class Test {
 
       private const string Pw = "Wr0ngP@$$w0rd!";
 
@@ -43,7 +42,7 @@ namespace Test {
   </parameters>
   <connections>
     <add name='input' provider='bogus' seed='1' />
-    <add name='output' provider='postgresql' database='Junk' user='postgres' password='{Pw}' />
+    <add name='output' provider='postgresql' database='junk' user='postgres' password='{Pw}' />
   </connections>
   <entities>
     <add name='Contact' size='@[Size]'>
@@ -57,9 +56,10 @@ namespace Test {
     </add>
   </entities>
 </add>";
-         using (var outer = new ConfigurationContainer().CreateScope(xml)) {
+         var logger = new ConsoleLogger(LogLevel.Debug);
+         using (var outer = new ConfigurationContainer().CreateScope(xml, logger)) {
             var process = outer.Resolve<Process>();
-            using (var inner = new TestContainer(new BogusModule(), new PostgreSqlModule()).CreateScope(process, new DebugLogger(LogLevel.Debug))) {
+            using (var inner = new Container(new BogusModule(), new PostgreSqlModule()).CreateScope(process, logger)) {
 
                var controller = inner.Resolve<IProcessController>();
                controller.Execute();
@@ -76,7 +76,7 @@ namespace Test {
       <add name='pw' value='*' />
    </parameters>
   <connections>
-    <add name='input' provider='postgresql' database='Junk' user='postgres' password='{Pw}' />
+    <add name='input' provider='postgresql' database='junk' user='postgres' password='{Pw}' />
     <add name='output' provider='internal' />
   </connections>
   <entities>
@@ -94,10 +94,11 @@ namespace Test {
     </add>
   </entities>
 </add>";
-         using (var outer = new ConfigurationContainer().CreateScope(xml)) {
+         var logger = new ConsoleLogger(LogLevel.Debug);
+         using (var outer = new ConfigurationContainer().CreateScope(xml, logger)) {
             var process = outer.Resolve<Process>();
 
-            using (var inner = new TestContainer(new PostgreSqlModule()).CreateScope(process, new DebugLogger(LogLevel.Debug))) {
+            using (var inner = new TestContainer(new PostgreSqlModule()).CreateScope(process, logger)) {
 
                var controller = inner.Resolve<IProcessController>();
                controller.Execute();

@@ -22,7 +22,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Transformalize.Configuration;
 using Transformalize.Containers.Autofac;
 using Transformalize.Contracts;
-using Transformalize.Logging;
+using Transformalize.Providers.Console;
 using Transformalize.Providers.PostgreSql;
 using Transformalize.Providers.PostgreSql.Autofac;
 using Transformalize.Providers.SqlServer;
@@ -35,7 +35,7 @@ namespace Test {
    public class NorthWindIntegrationPostgreSql {
 
       public string Cfg { get; set; } = @"Files\NorthWindSqlServerToPostgreSql.xml";
-      private const string Password = "Wr0ngP@$$w0rd!";
+      private const string Password = "devdev1!"; //Wr0ngP@$$w0rd!
 
       public Connection InputConnection { get; set; } = new Connection {
          Name = "input",
@@ -52,6 +52,9 @@ namespace Test {
       [TestMethod]
       public void Integration() {
 
+         var logger = new ConsoleLogger(LogLevel.Debug);
+
+
          // CORRECT DATA AND INITIAL LOAD
          using (var cn = new SqlServerConnectionFactory(InputConnection).GetConnection()) {
             cn.Open();
@@ -61,9 +64,9 @@ namespace Test {
             "));
          }
 
-         using (var outer = new ConfigurationContainer().CreateScope(Cfg + $"?Mode=init&Password={Password}")) {
+         using (var outer = new ConfigurationContainer().CreateScope(Cfg + $"?Mode=init&Password={Password}", logger)) {
             var process = outer.Resolve<Process>();
-            using (var inner = new TestContainer(new PostgreSqlModule(), new SqlServerModule(), new JintModule()).CreateScope(process, new DebugLogger(LogLevel.Debug))) {
+            using (var inner = new TestContainer(new PostgreSqlModule(), new SqlServerModule(), new JintModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
                controller.Execute();
             }
@@ -76,9 +79,9 @@ namespace Test {
          }
 
          // FIRST DELTA, NO CHANGES
-         using (var outer = new ConfigurationContainer().CreateScope(Cfg + $"?Password={Password}")) {
+         using (var outer = new ConfigurationContainer().CreateScope(Cfg + $"?Password={Password}", logger)) {
             var process = outer.Resolve<Process>();
-            using (var inner = new TestContainer(new PostgreSqlModule(), new SqlServerModule(), new JintModule()).CreateScope(process, new DebugLogger(LogLevel.Debug))) {
+            using (var inner = new Container(new PostgreSqlModule(), new SqlServerModule(), new JintModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
                controller.Execute();
             }
@@ -97,9 +100,9 @@ namespace Test {
             Assert.AreEqual(1, cn.Execute(sql));
          }
 
-         using (var outer = new ConfigurationContainer().CreateScope(Cfg + $"?Password={Password}")) {
+         using (var outer = new ConfigurationContainer().CreateScope(Cfg + $"?Password={Password}", logger)) {
             var process = outer.Resolve<Process>();
-            using (var inner = new TestContainer(new PostgreSqlModule(), new SqlServerModule(), new JintModule()).CreateScope(process, new DebugLogger(LogLevel.Debug))) {
+            using (var inner = new Container(new PostgreSqlModule(), new SqlServerModule(), new JintModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
                controller.Execute();
             }
@@ -119,9 +122,9 @@ namespace Test {
             Assert.AreEqual(1, cn.Execute("UPDATE Orders SET CustomerID = 'VICTE', Freight = 20.11 WHERE OrderId = 10254;"));
          }
 
-         using (var outer = new ConfigurationContainer().CreateScope(Cfg + $"?Password={Password}")) {
+         using (var outer = new ConfigurationContainer().CreateScope(Cfg + $"?Password={Password}", logger)) {
             var process = outer.Resolve<Process>();
-            using (var inner = new TestContainer(new PostgreSqlModule(), new SqlServerModule(), new JintModule()).CreateScope(process, new DebugLogger(LogLevel.Debug))) {
+            using (var inner = new Container(new PostgreSqlModule(), new SqlServerModule(), new JintModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
                controller.Execute();
             }
