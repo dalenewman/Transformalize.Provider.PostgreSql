@@ -35,7 +35,7 @@ namespace Test {
    public class NorthWindIntegrationPostgreSql {
 
       public string Cfg { get; set; } = @"Files\NorthWindSqlServerToPostgreSql.xml";
-      private const string Password = "devdev1!"; //Wr0ngP@$$w0rd!
+      private const string Password = "Wr0ngP@$$w0rd!"; //Wr0ngP@$$w0rd!
 
       public Connection InputConnection { get; set; } = new Connection {
          Name = "input",
@@ -66,7 +66,7 @@ namespace Test {
 
          using (var outer = new ConfigurationContainer().CreateScope(Cfg + $"?Mode=init&Password={Password}", logger)) {
             var process = outer.Resolve<Process>();
-            using (var inner = new TestContainer(new PostgreSqlModule(), new SqlServerModule(), new JintModule()).CreateScope(process, logger)) {
+            using (var inner = new Container(new PostgreSqlModule(), new SqlServerModule(), new JintTransformModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
                controller.Execute();
             }
@@ -81,7 +81,7 @@ namespace Test {
          // FIRST DELTA, NO CHANGES
          using (var outer = new ConfigurationContainer().CreateScope(Cfg + $"?Password={Password}", logger)) {
             var process = outer.Resolve<Process>();
-            using (var inner = new Container(new PostgreSqlModule(), new SqlServerModule(), new JintModule()).CreateScope(process, logger)) {
+            using (var inner = new Container(new PostgreSqlModule(), new SqlServerModule(), new JintTransformModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
                controller.Execute();
             }
@@ -102,7 +102,7 @@ namespace Test {
 
          using (var outer = new ConfigurationContainer().CreateScope(Cfg + $"?Password={Password}", logger)) {
             var process = outer.Resolve<Process>();
-            using (var inner = new Container(new PostgreSqlModule(), new SqlServerModule(), new JintModule()).CreateScope(process, logger)) {
+            using (var inner = new Container(new PostgreSqlModule(), new SqlServerModule(), new JintTransformModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
                controller.Execute();
             }
@@ -124,7 +124,7 @@ namespace Test {
 
          using (var outer = new ConfigurationContainer().CreateScope(Cfg + $"?Password={Password}", logger)) {
             var process = outer.Resolve<Process>();
-            using (var inner = new Container(new PostgreSqlModule(), new SqlServerModule(), new JintModule()).CreateScope(process, logger)) {
+            using (var inner = new Container(new PostgreSqlModule(), new SqlServerModule(), new JintTransformModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
                controller.Execute();
             }

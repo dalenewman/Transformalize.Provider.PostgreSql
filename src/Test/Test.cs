@@ -98,7 +98,7 @@ namespace Test {
          using (var outer = new ConfigurationContainer().CreateScope(xml, logger)) {
             var process = outer.Resolve<Process>();
 
-            using (var inner = new TestContainer(new PostgreSqlModule()).CreateScope(process, logger)) {
+            using (var inner = new Container(new PostgreSqlModule()).CreateScope(process, logger)) {
 
                var controller = inner.Resolve<IProcessController>();
                controller.Execute();
