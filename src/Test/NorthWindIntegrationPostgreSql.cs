@@ -35,7 +35,7 @@ namespace Test {
    public class NorthWindIntegrationPostgreSql {
 
       public string Cfg { get; set; } = @"Files\NorthWindSqlServerToPostgreSql.xml";
-      private const string Password = "Wr0ngP@$$w0rd!"; //Wr0ngP@$$w0rd!
+      private const string Password = "Wr0ngP@$$w0rd!";
 
       public Connection InputConnection { get; set; } = new Connection {
          Name = "input",

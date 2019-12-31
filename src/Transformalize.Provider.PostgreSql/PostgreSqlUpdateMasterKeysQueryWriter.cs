@@ -21,79 +21,82 @@ using Transformalize.Contracts;
 using Transformalize.Providers.Ado;
 
 namespace Transformalize.Providers.PostgreSql {
-    public class PostgreSqlUpdateMasterKeysQueryWriter : IWriteMasterUpdateQuery {
-        private readonly IContext _c;
-        private readonly IConnectionFactory _cf;
-        public PostgreSqlUpdateMasterKeysQueryWriter(IContext context, IConnectionFactory factory) {
-            _c = context;
-            _cf = factory;
-        }
 
-        public string Write(EntityStatus status) {
-            /* if update occurs, outside of first run, you must update the master's 
-               batch id to the entity's batch id (which will be higher).
-               Updating this clues us in that we have to update process-level calculated columns
-               on the master record.  It also keeps the master's batch id incrementing to indicate 
-               updates for subsequent processes using this process' output as an input with TflBatchId 
-               as a version field.
-            */
+   /// <summary>
+   /// Can't use ADO version of this query because PostgreSql does the UPDATE FROM stuff a little differently
+   /// You UPDATE theTarget t FROM AnotherTable a WHERE t.Key = a.Key, you do not specify the target table twice like in T-SQL 
+   /// </summary>
+   public class PostgreSqlUpdateMasterKeysQueryWriter : IWriteMasterUpdateQuery {
+      private readonly IContext _c;
+      private readonly IConnectionFactory _cf;
+      public PostgreSqlUpdateMasterKeysQueryWriter(IContext context, IConnectionFactory factory) {
+         _c = context;
+         _cf = factory;
+      }
 
-            var masterEntity = _c.Process.Entities.First(e => e.IsMaster);
-            var masterTable = _cf.Enclose(masterEntity.OutputTableName(_c.Process.Name));
-            var masterAlias = masterEntity.GetExcelName();
+      public string Write(EntityStatus status) {
+         /* if update occurs, outside of first run, you must update the master's 
+            batch id to the entity's batch id (which will be higher).
+            Updating this clues us in that we have to update process-level calculated columns
+            on the master record.  It also keeps the master's batch id incrementing to indicate 
+            updates for subsequent processes using this process' output as an input with TflBatchId 
+            as a version field.
+         */
 
-            var entityAlias = _c.Entity.GetExcelName();
-            var builder = new StringBuilder();
-            var setPrefix = string.Empty;
+         var masterEntity = _c.Process.Entities.First(e => e.IsMaster);
+         var masterTable = _cf.Enclose(masterEntity.OutputTableName(_c.Process.Name));
+         var masterAlias = masterEntity.GetExcelName();
 
-            var sets = _c.Entity.Fields.Any(f => f.KeyType.HasFlag(KeyType.Foreign)) ?
-                "SET " + string.Join(",", _c.Entity.Fields
-                    .Where(f => f.KeyType.HasFlag(KeyType.Foreign))
-                    .Select(f => $"{setPrefix}{_cf.Enclose(f.FieldName())} = {entityAlias}.{_cf.Enclose(f.FieldName())}"))
-                :
-                string.Empty;
+         var entityAlias = _c.Entity.GetExcelName();
+         var builder = new StringBuilder();
+         var setPrefix = string.Empty;
 
-            builder.AppendLine($"UPDATE {masterTable} {masterAlias}");
+         var sets = _c.Entity.Fields.Any(f => f.KeyType.HasFlag(KeyType.Foreign)) ?
+             string.Join(",", _c.Entity.Fields
+                 .Where(f => f.KeyType.HasFlag(KeyType.Foreign))
+                 .Select(f => $"{setPrefix}{_cf.Enclose(f.FieldName())} = {entityAlias}.{_cf.Enclose(f.FieldName())}"))
+             :
+             string.Empty;
 
-            builder.Append(sets);
+         builder.AppendLine();
+         builder.AppendLine($"UPDATE {masterTable} {masterAlias}");
+         builder.AppendLine($"SET {sets}{(sets == string.Empty ? string.Empty : ", ")}{_cf.Enclose(masterEntity.TflBatchId().FieldName())} = @TflBatchId");
 
-            builder.Append($"{(sets == string.Empty ? string.Empty : ",")}{_cf.Enclose(masterEntity.TflBatchId().FieldName())} = @TflBatchId");
+         var relationships = _c.Entity.RelationshipToMaster.Reverse().ToArray();
+         var tables = string.Join(", ", relationships.Select(r => _cf.Enclose(r.Summary.RightEntity.OutputTableName(_c.Process.Name)) + " " + r.Summary.RightEntity.GetExcelName()));
 
-            var relationships = _c.Entity.RelationshipToMaster.Reverse().ToArray();
+         builder.AppendLine($"FROM {tables}");
 
-            var tables = string.Join(", ", relationships.Select(r => _cf.Enclose(r.Summary.RightEntity.OutputTableName(_c.Process.Name)) + " " + r.Summary.RightEntity.GetExcelName()));
-            builder.AppendLine();
-            builder.AppendLine($" FROM {tables}");
+         for (var r = 0; r < relationships.Length; r++) {
 
-            for (var r = 0; r < relationships.Length; r++) {
-                var relationship = relationships[r];
-                var rightEntityAlias = relationship.Summary.RightEntity.GetExcelName();
+            var relationship = relationships[r];
+            var rightEntityAlias = relationship.Summary.RightEntity.GetExcelName();
 
-                builder.Append(r == 0 ? " WHERE (" : " AND (");
+            builder.Append(r == 0 ? "WHERE (" : "AND (");
 
-                var leftEntityAlias = relationship.Summary.LeftEntity.GetExcelName();
-                for (var i = 0; i < relationship.Summary.LeftFields.Count; i++) {
-                    var leftAlias = relationship.Summary.LeftFields[i].FieldName();
-                    var rightAlias = relationship.Summary.RightFields[i].FieldName();
-                    var conjunction = i > 0 ? " AND " : string.Empty;
-                    builder.AppendFormat(
-                        "{0}{1}.{2} = {3}.{4}",
-                        conjunction,
-                        leftEntityAlias,
-                        _cf.Enclose(leftAlias),
-                        rightEntityAlias,
-                        _cf.Enclose(rightAlias)
-                        );
-                }
-                builder.AppendLine(")");
+            var leftEntityAlias = relationship.Summary.LeftEntity.GetExcelName();
+            for (var i = 0; i < relationship.Summary.LeftFields.Count; i++) {
+               var leftAlias = relationship.Summary.LeftFields[i].FieldName();
+               var rightAlias = relationship.Summary.RightFields[i].FieldName();
+               var conjunction = i > 0 ? " AND " : string.Empty;
+               builder.AppendFormat(
+                   "{0}{1}.{2} = {3}.{4}",
+                   conjunction,
+                   leftEntityAlias,
+                   _cf.Enclose(leftAlias),
+                   rightEntityAlias,
+                   _cf.Enclose(rightAlias)
+                   );
             }
+            builder.AppendLine(")");
+         }
 
-            builder.AppendLine($"AND ({entityAlias}.{_cf.Enclose(_c.Entity.TflBatchId().FieldName())} = @TflBatchId OR {masterAlias}.{_cf.Enclose(masterEntity.TflBatchId().FieldName())} >= @MasterTflBatchId)");
+         builder.AppendLine($"AND ({entityAlias}.{_cf.Enclose(_c.Entity.TflBatchId().FieldName())} = @TflBatchId OR {masterAlias}.{_cf.Enclose(masterEntity.TflBatchId().FieldName())} >= @MasterTflBatchId)");
 
-            var sql = builder.ToString();
-            _c.Debug(() => sql);
-            return sql;
+         var sql = builder.ToString();
+         _c.Debug(() => sql);
+         return sql;
 
-        }
-    }
+      }
+   }
 }

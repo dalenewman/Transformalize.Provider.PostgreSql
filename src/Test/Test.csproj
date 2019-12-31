@@ -112,9 +112,8 @@
     <Reference Include="Transformalize.Jint, Version=0.6.20.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Transformalize.Transform.Jint.0.6.20-beta\lib\net462\Transformalize.Jint.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Provider.Ado, Version=0.6.24.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Transformalize.Provider.Ado.0.6.24-beta\lib\net462\Transformalize.Provider.Ado.dll</HintPath>
+    <Reference Include="Transformalize.Provider.Ado, Version=0.6.25.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Transformalize.Provider.Ado.0.6.25-beta\lib\net462\Transformalize.Provider.Ado.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Provider.Bogus, Version=0.6.21.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Transformalize.Provider.Bogus.0.6.21-beta\lib\net462\Transformalize.Provider.Bogus.dll</HintPath>
@@ -142,6 +141,7 @@
     <Compile Include="NorthWindIntegrationPostgreSql.cs" />
     <Compile Include="Test.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestPostgreSqlUpdateMasterKeysQueryWriter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
