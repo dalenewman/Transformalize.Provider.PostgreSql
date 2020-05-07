@@ -2,11 +2,11 @@
 <package>
    <metadata>
       <id>Transformalize.Provider.PostgreSql.Autofac</id>
-      <version>0.6.28-beta</version>
+      <version>0.7.4-beta</version>
       <title>Transformalize Transform using PostgreSql Autofac Module</title>
       <authors>Dale Newman</authors>
       <owners>Dale Newman</owners>
-      <licenseUrl>https://github.com/dalenewman/Transformalize.Provider.PostgreSql/blob/master/LICENSE.md</licenseUrl>
+      <license type="expression">Apache-2.0</license>
       <projectUrl>https://github.com/dalenewman/Transformalize.Provider.PostgreSql</projectUrl>
       <requireLicenseAcceptance>false</requireLicenseAcceptance>
       <description>Transformalize Transform using PostgreSql Autofac Module</description>
@@ -15,18 +15,22 @@
       <tags>etl</tags>
       <dependencies>
          <group targetFramework="net462">
-            <dependency id="Transformalize.Provider.PostgreSql" version="0.6.28-beta" />
-            <dependency id="Transformalize.Container.Autofac" version="0.6.28-beta" />
+            <dependency id="Transformalize.Provider.PostgreSql" version="0.7.4-beta" />
+            <dependency id="Transformalize.Container.Autofac" version="0.7.4-beta" />
          </group>
          <group targetFramework="netstandard2.0">
-            <dependency id="Transformalize.Provider.PostgreSql" version="0.6.28-beta" />
-            <dependency id="Transformalize.Container.Autofac" version="0.6.28-beta" />
+            <dependency id="Transformalize.Provider.PostgreSql" version="0.7.4-beta" />
+            <dependency id="Transformalize.Container.Autofac" version="0.7.4-beta" />
          </group>
       </dependencies>
    </metadata>
    <files>
-      <file src="..\src\Transformalize.Provider.PostgreSql.Autofac\bin\Release\Transformalize.Provider.PostgreSql.Autofac.dll" target="lib\net462\Transformalize.Provider.PostgreSql.Autofac.dll" />
-      <file src="..\src\Transformalize.Provider.PostgreSql.Autofac.Standard.20\bin\Release\netstandard2.0\Transformalize.Provider.PostgreSql.Autofac.deps.json" target="lib\netstandard2.0\Transformalize.Provider.PostgreSql.Autofac.deps.json" />
-      <file src="..\src\Transformalize.Provider.PostgreSql.Autofac.Standard.20\bin\Release\netstandard2.0\Transformalize.Provider.PostgreSql.Autofac.dll" target="lib\netstandard2.0\Transformalize.Provider.PostgreSql.Autofac.dll" />
+      <file src="..\src\Transformalize.Provider.PostgreSql.Autofac\bin\Debug\Transformalize.Provider.PostgreSql.Autofac.dll" target="lib\net462\Transformalize.Provider.PostgreSql.Autofac.dll" />
+      <file src="..\src\Transformalize.Provider.PostgreSql.Autofac\bin\Debug\Transformalize.Provider.PostgreSql.Autofac.pdb" target="lib\net462\Transformalize.Provider.PostgreSql.Autofac.pdb" />
+
+      <file src="..\src\Transformalize.Provider.PostgreSql.Autofac.Standard.20\bin\Debug\netstandard2.0\Transformalize.Provider.PostgreSql.Autofac.deps.json" target="lib\netstandard2.0\Transformalize.Provider.PostgreSql.Autofac.deps.json" />
+      <file src="..\src\Transformalize.Provider.PostgreSql.Autofac.Standard.20\bin\Debug\netstandard2.0\Transformalize.Provider.PostgreSql.Autofac.dll" target="lib\netstandard2.0\Transformalize.Provider.PostgreSql.Autofac.dll" />
+      <file src="..\src\Transformalize.Provider.PostgreSql.Autofac.Standard.20\bin\Debug\netstandard2.0\Transformalize.Provider.PostgreSql.Autofac.pdb" target="lib\netstandard2.0\Transformalize.Provider.PostgreSql.Autofac.pdb" />
+
    </files>
 </package>

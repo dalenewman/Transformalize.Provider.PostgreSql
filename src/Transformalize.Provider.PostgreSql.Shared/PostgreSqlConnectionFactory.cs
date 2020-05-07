@@ -24,19 +24,19 @@ using Transformalize.Configuration;
 using Transformalize.Providers.Ado;
 
 namespace Transformalize.Providers.PostgreSql {
-    public class PostgreSqlConnectionFactory : IConnectionFactory {
-        static Dictionary<string, string> _types;
-        private static HashSet<string> _reserved;
-        readonly Connection _c;
+   public class PostgreSqlConnectionFactory : IConnectionFactory {
+      static Dictionary<string, string> _types;
+      private static HashSet<string> _reserved;
+      readonly Connection _c;
 
-        public AdoProvider AdoProvider { get; } = AdoProvider.PostgreSql;
-        public string Terminator { get; } = ";";
+      public AdoProvider AdoProvider { get; } = AdoProvider.PostgreSql;
+      public string Terminator { get; } = ";";
 
-        //select * from pg_get_keywords() where catcode = 'R'
-        public HashSet<string> Reserved => _reserved ??
-        (_reserved =
-            new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-            {
+      //select * from pg_get_keywords() where catcode = 'R'
+      public HashSet<string> Reserved => _reserved ??
+      (_reserved =
+          new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+          {
                 "all",
                 "analyse",
                 "analyze",
@@ -132,9 +132,9 @@ namespace Transformalize.Providers.PostgreSql {
                 "where",
                 "window",
                 "with"
-            });
+          });
 
-        public Dictionary<string, string> Types => _types ?? (_types = new Dictionary<string, string> {
+      public Dictionary<string, string> Types => _types ?? (_types = new Dictionary<string, string> {
             {"int64", "BIGINT"},
             {"int", "INTEGER"},
             {"real", "REAL" },
@@ -159,63 +159,65 @@ namespace Transformalize.Providers.PostgreSql {
             {"xml", "XML"}
         });
 
-        public PostgreSqlConnectionFactory(Connection connection) {
-            _c = connection;
-        }
+      public PostgreSqlConnectionFactory(Connection connection) {
+         _c = connection;
+      }
 
-        public IDbConnection GetConnection(string appName = null) {
-            return new NpgsqlConnection(GetConnectionString(appName));
-        }
+      public IDbConnection GetConnection(string appName = null) {
+         return new NpgsqlConnection(GetConnectionString(appName));
+      }
 
-        public string GetConnectionString(string appName = null) {
-            if (_c.ConnectionString != string.Empty)
-                return _c.ConnectionString;
-
-            _c.ConnectionString = new NpgsqlConnectionStringBuilder {
-                ApplicationName = appName ?? Constants.ApplicationName,
-                Database = _c.Database,
-                Host = _c.Server,
-                IntegratedSecurity = _c.User == string.Empty && _c.Password == string.Empty,
-                Password = _c.Password,
-                Username = _c.User,
-                Port = _c.Port == 0 ? 5432 : _c.Port,
-                Timeout = _c.RequestTimeout
-            }.ConnectionString;
-
+      public string GetConnectionString(string appName = null) {
+         if (_c.ConnectionString != string.Empty)
             return _c.ConnectionString;
-        }
 
-        static char L { get; } = '"';
-        static char R { get; } = '"';
+         _c.ConnectionString = new NpgsqlConnectionStringBuilder {
+            ApplicationName = appName ?? Constants.ApplicationName,
+            Database = _c.Database,
+            Host = _c.Server,
+            IntegratedSecurity = _c.User == string.Empty && _c.Password == string.Empty,
+            Password = _c.Password,
+            Username = _c.User,
+            Port = _c.Port == 0 ? 5432 : _c.Port,
+            Timeout = _c.RequestTimeout
+         }.ConnectionString;
 
-        /// <summary>
-        /// The Postgres Server requires case sensativity if you enclose identifiers in double-quotes.  
-        /// So, this is only done when necessary.
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public string Enclose(string name) {
-            return name.Contains(" ") || Reserved.Contains(name) ? L + name + R : name;
-        }
+         return _c.ConnectionString;
+      }
 
-        public string SqlDataType(Field f) {
+      static char L { get; } = '"';
+      static char R { get; } = '"';
 
-            var length = (new[] { "string", "char" }).Any(t => t == f.Type) ? $"({(f.Length)})" : string.Empty;
-            var dimensions = (new[] { "decimal" }).Any(s => s.Equals(f.Type)) ?
-                $"({f.Precision},{f.Scale})" :
-                string.Empty;
+      public bool SupportsLimit => true;
 
-            var sqlDataType = Types[f.Type];
+      /// <summary>
+      /// The Postgres Server requires case sensativity if you enclose identifiers in double-quotes.  
+      /// So, this is only done when necessary.
+      /// </summary>
+      /// <param name="name"></param>
+      /// <returns></returns>
+      public string Enclose(string name) {
+         return name.Contains(" ") || Reserved.Contains(name) ? L + name + R : name;
+      }
 
-            var type = string.Concat(sqlDataType, length, dimensions);
-            switch (type.ToLower()) {
-                case "varchar(max)":
-                    return "TEXT";
-                default:
-                    return type;
-            }
+      public string SqlDataType(Field f) {
 
-        }
+         var length = (new[] { "string", "char" }).Any(t => t == f.Type) ? $"({(f.Length)})" : string.Empty;
+         var dimensions = (new[] { "decimal" }).Any(s => s.Equals(f.Type)) ?
+             $"({f.Precision},{f.Scale})" :
+             string.Empty;
 
-    }
+         var sqlDataType = Types[f.Type];
+
+         var type = string.Concat(sqlDataType, length, dimensions);
+         switch (type.ToLower()) {
+            case "varchar(max)":
+               return "TEXT";
+            default:
+               return type;
+         }
+
+      }
+
+   }
 }

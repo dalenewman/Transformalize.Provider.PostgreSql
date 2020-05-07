@@ -231,7 +231,7 @@ namespace Transformalize.Providers.PostgreSql.Autofac {
                             handler.Register(TransformFactory.GetTransforms(ctx, context, primaryKey));
                             handler.Register(new StringTruncateTransfom(context, primaryKey));
 
-                            return new ParallelDeleteHandler(handler);
+                            return handler;
                         }).Named<IEntityDeleteHandler>(entity.Key);
                     }
 

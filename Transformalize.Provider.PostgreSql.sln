@@ -5,11 +5,13 @@ VisualStudioVersion = 16.0.29926.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C4563C88-9C80-4BD0-949E-AA64F111957E}"
 	ProjectSection(SolutionItems) = preProject
+		LICENSE = LICENSE
 		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nuget", "nuget", "{8FE1844F-26A4-47BE-9507-F0333D42FABE}"
 	ProjectSection(SolutionItems) = preProject
+		nuget\myget.bat = nuget\myget.bat
 		nuget\nuget.bat = nuget\nuget.bat
 		nuget\Transformalize.Provider.PostgreSql.Autofac.nuspec = nuget\Transformalize.Provider.PostgreSql.Autofac.nuspec
 		nuget\Transformalize.Provider.PostgreSql.nuspec = nuget\Transformalize.Provider.PostgreSql.nuspec
@@ -27,11 +29,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Provider.Autofac", "Provide
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Transformalize.Provider.PostgreSql.Shared", "src\Transformalize.Provider.PostgreSql.Shared\Transformalize.Provider.PostgreSql.Shared.shproj", "{303FF112-06E6-405F-BD5D-7860F4708387}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize.Provider.PostgreSql.Standard.20", "src\Transformalize.Provider.PostgreSql.Standard.20\Transformalize.Provider.PostgreSql.Standard.20.csproj", "{3678E57A-AE2B-41A3-82AE-390E90BE3E85}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Provider.PostgreSql.Standard.20", "src\Transformalize.Provider.PostgreSql.Standard.20\Transformalize.Provider.PostgreSql.Standard.20.csproj", "{3678E57A-AE2B-41A3-82AE-390E90BE3E85}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Transformalize.Provider.PostgreSql.Autofac.Shared", "src\Transformalize.Provider.PostgreSql.Autofac.Shared\Transformalize.Provider.PostgreSql.Autofac.Shared.shproj", "{AD423420-F145-4EE4-9AD4-FAE1848EC37B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize.Provider.PostgreSql.Autofac.Standard.20", "src\Transformalize.Provider.PostgreSql.Autofac.Standard.20\Transformalize.Provider.PostgreSql.Autofac.Standard.20.csproj", "{5EB66FBD-8AC6-43BD-9D3D-A6601FB6AAD9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Provider.PostgreSql.Autofac.Standard.20", "src\Transformalize.Provider.PostgreSql.Autofac.Standard.20\Transformalize.Provider.PostgreSql.Autofac.Standard.20.csproj", "{5EB66FBD-8AC6-43BD-9D3D-A6601FB6AAD9}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
