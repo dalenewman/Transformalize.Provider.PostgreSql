@@ -16,6 +16,7 @@
 // limitations under the License.
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
@@ -29,216 +30,222 @@ using Transformalize.Providers.Ado;
 using Transformalize.Transforms.System;
 
 namespace Transformalize.Providers.PostgreSql.Autofac {
-    public class PostgreSqlModule : Module {
+   public class PostgreSqlModule : Module {
 
-        private const string Provider = "postgresql";
+      private const string Provider = "postgresql";
 
-        protected override void Load(ContainerBuilder builder) {
+      public Func<Connection, IConnectionFactory> ConnectionFactory { get; set; }
 
-            if (!builder.Properties.ContainsKey("Process")) {
-                return;
+      protected override void Load(ContainerBuilder builder) {
+
+         if (!builder.Properties.ContainsKey("Process")) {
+            return;
+         }
+
+         var process = (Process)builder.Properties["Process"];
+
+         // connections
+         foreach (var connection in process.Connections.Where(c => c.Provider == Provider)) {
+
+            // Connection Factory
+            if (ConnectionFactory == null) {
+               builder.Register<IConnectionFactory>(ctx => new PostgreSqlConnectionFactory(connection)).Named<IConnectionFactory>(connection.Key).InstancePerLifetimeScope();
+            } else {
+               builder.Register(ctx => ConnectionFactory(connection)).Named<IConnectionFactory>(connection.Key).InstancePerLifetimeScope();
             }
 
-            var process = (Process)builder.Properties["Process"];
+            // Schema Reader
+            builder.Register<ISchemaReader>(ctx => {
+               var factory = ctx.ResolveNamed<IConnectionFactory>(connection.Key);
+               return new AdoSchemaReader(ctx.ResolveNamed<IConnectionContext>(connection.Key), factory);
+            }).Named<ISchemaReader>(connection.Key);
 
-            // connections
-            foreach (var connection in process.Connections.Where(c => c.Provider == Provider)) {
+         }
 
-                // Connection Factory
-                builder.Register<IConnectionFactory>(ctx => new PostgreSqlConnectionFactory(connection)).Named<IConnectionFactory>(connection.Key).InstancePerLifetimeScope();
+         // entity input
+         foreach (var entity in process.Entities.Where(e => process.Connections.First(c => c.Name == e.Connection).Provider == Provider)) {
 
-                // Schema Reader
-                builder.Register<ISchemaReader>(ctx => {
-                    var factory = ctx.ResolveNamed<IConnectionFactory>(connection.Key);
-                    return new AdoSchemaReader(ctx.ResolveNamed<IConnectionContext>(connection.Key), factory);
-                }).Named<ISchemaReader>(connection.Key);
+            // INPUT READER
+            builder.Register<IRead>(ctx => {
+
+               var input = ctx.ResolveNamed<InputContext>(entity.Key);
+               var rowFactory = ctx.ResolveNamed<IRowFactory>(entity.Key, new NamedParameter("capacity", input.RowCapacity));
+               var dataReader = new AdoInputReader(
+                   input,
+                   input.InputFields,
+                   ctx.ResolveNamed<IConnectionFactory>(input.Connection.Key),
+                   rowFactory
+               );
+
+               return dataReader;
+
+            }).Named<IRead>(entity.Key);
+
+            // INPUT VERSION DETECTOR
+            builder.Register<IInputProvider>(ctx => {
+               var input = ctx.ResolveNamed<InputContext>(entity.Key);
+               return new AdoInputProvider(input, ctx.ResolveNamed<IConnectionFactory>(input.Connection.Key));
+            }).Named<IInputProvider>(entity.Key);
+
+         }
+
+         // entity output
+         if (process.Output().Provider == Provider) {
+
+            var calc = process.ToCalculatedFieldsProcess();
+
+            // PROCESS OUTPUT CONTROLLER
+            builder.Register<IOutputController>(ctx => {
+               var output = ctx.Resolve<OutputContext>();
+               if (process.Mode != "init")
+                  return new NullOutputController();
+
+               var actions = new List<IAction> { new AdoStarViewCreator(output, ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key)) };
+               if (process.Flatten) {
+                  actions.Add(new AdoFlatTableCreator(output, ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key)));
+               }
+               return new AdoStarController(output, actions);
+            }).As<IOutputController>();
+
+            // PROCESS CALCULATED READER
+            builder.Register<IRead>(ctx => {
+               var calcContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, calc.Entities.First());
+               var outputContext = new OutputContext(calcContext);
+               var cf = ctx.ResolveNamed<IConnectionFactory>(outputContext.Connection.Key);
+               var capacity = outputContext.Entity.Fields.Count + outputContext.Entity.CalculatedFields.Count;
+               var rowFactory = new RowFactory(capacity, false, false);
+               return new AdoStarParametersReader(outputContext, process, cf, rowFactory);
+            }).As<IRead>();
+
+            // PROCESS CALCULATED FIELD WRITER
+            builder.Register<IWrite>(ctx => {
+               var calcContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, calc.Entities.First());
+               var outputContext = new OutputContext(calcContext);
+               var cf = ctx.ResolveNamed<IConnectionFactory>(outputContext.Connection.Key);
+               return new AdoCalculatedFieldUpdater(outputContext, process, cf);
+            }).As<IWrite>();
+
+            // PROCESS INITIALIZER
+            builder.Register<IInitializer>(ctx => {
+               var output = ctx.Resolve<OutputContext>();
+               return new AdoInitializer(output, ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key));
+            }).As<IInitializer>();
+
+            // ENTITIES
+            foreach (var entity in process.Entities) {
+
+               builder.Register<IOutputProvider>(ctx => {
+
+                  var output = ctx.ResolveNamed<OutputContext>(entity.Key);
+                  var cf = ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key);
+                  var rowFactory = ctx.ResolveNamed<IRowFactory>(entity.Key, new NamedParameter("capacity", output.GetAllEntityFields().Count()));
+
+                  // matcher determines what's an update vs. and insert
+                  var matcher = entity.Update ? (IBatchReader)new AdoEntityMatchingKeysReader(output, cf, rowFactory) : new NullBatchReader();
+
+                  var writer = new AdoEntityWriter(
+                      output,
+                      matcher,
+                      new AdoEntityInserter(output, cf),
+                      entity.Update ? (IWrite)new AdoEntityUpdater(output, cf) : new NullWriter(output)
+                  );
+
+                  return new AdoOutputProvider(output, cf, writer);
+               }).Named<IOutputProvider>(entity.Key);
+
+               // ENTITY OUTPUT CONTROLLER
+               builder.Register<IOutputController>(ctx => {
+
+                  var output = ctx.ResolveNamed<OutputContext>(entity.Key);
+                  var initializer = process.Mode == "init" ? (IAction)new AdoEntityInitializer(output, ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key)) : new NullInitializer();
+
+                  return new AdoOutputController(
+                      output,
+                      initializer,
+                      ctx.ResolveNamed<IInputProvider>(entity.Key),
+                      ctx.ResolveNamed<IOutputProvider>(entity.Key),
+                      ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key)
+                  );
+
+               }).Named<IOutputController>(entity.Key);
+
+               // MASTER UPDATE QUERY
+               builder.Register<IWriteMasterUpdateQuery>(ctx => {
+                  var output = ctx.ResolveNamed<OutputContext>(entity.Key);
+                  var factory = ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key);
+                  return new PostgreSqlUpdateMasterKeysQueryWriter(output, factory);
+               }).Named<IWriteMasterUpdateQuery>(entity.Key + "MasterKeys");
+
+               // MASTER UPDATER
+               builder.Register<IUpdate>(ctx => {
+                  var output = ctx.ResolveNamed<OutputContext>(entity.Key);
+                  return new AdoMasterUpdater(
+                      output,
+                      ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key),
+                      ctx.ResolveNamed<IWriteMasterUpdateQuery>(entity.Key + "MasterKeys")
+                  );
+               }).Named<IUpdate>(entity.Key);
+
+               // DELETE HANDLER
+               if (entity.Delete) {
+
+                  // register input keys and hashcode reader if necessary
+                  builder.Register(ctx => {
+                     var inputContext = ctx.ResolveNamed<InputContext>(entity.Key);
+                     var rowCapacity = inputContext.Entity.GetPrimaryKey().Count();
+                     var rowFactory = new RowFactory(rowCapacity, false, true);
+
+                     return new AdoReader(
+                         inputContext,
+                         entity.GetPrimaryKey(),
+                         ctx.ResolveNamed<IConnectionFactory>(inputContext.Connection.Key),
+                         rowFactory,
+                         ReadFrom.Input
+                     );
+                  }).Named<IReadInputKeysAndHashCodes>(entity.Key);
+
+                  // register output keys and hash code reader if necessary
+                  builder.Register((ctx => {
+                     var context = ctx.ResolveNamed<OutputContext>(entity.Key);
+                     var rowCapacity = context.Entity.GetPrimaryKey().Count();
+                     var rowFactory = new RowFactory(rowCapacity, false, true);
+
+                     var outputConnection = process.Output();
+                     return new AdoReader(context, entity.GetPrimaryKey(), ctx.ResolveNamed<IConnectionFactory>(outputConnection.Key), rowFactory, ReadFrom.Output);
+
+                  })).Named<IReadOutputKeysAndHashCodes>(entity.Key);
+
+                  builder.Register(ctx => {
+                     var outputConnection = process.Output();
+                     var outputContext = ctx.ResolveNamed<OutputContext>(entity.Key);
+                     return new AdoDeleter(outputContext, ctx.ResolveNamed<IConnectionFactory>(outputConnection.Key));
+                  }).Named<IDelete>(entity.Key);
+
+                  builder.Register<IEntityDeleteHandler>(ctx => {
+                     var context = ctx.ResolveNamed<IContext>(entity.Key);
+                     var primaryKey = entity.GetPrimaryKey();
+
+                     var handler = new DefaultDeleteHandler(
+                         context,
+                         ctx.ResolveNamed<IReadInputKeysAndHashCodes>(entity.Key),
+                         ctx.ResolveNamed<IReadOutputKeysAndHashCodes>(entity.Key),
+                         ctx.ResolveNamed<IDelete>(entity.Key)
+                     );
+
+                     // since the primary keys from the input may have been transformed into the output, you have to transform before comparing
+                     // feels a lot like entity pipeline on just the primary keys... may look at consolidating
+                     handler.Register(new DefaultTransform(context, entity.GetPrimaryKey().ToArray()));
+                     handler.Register(TransformFactory.GetTransforms(ctx, context, primaryKey));
+                     handler.Register(new StringTruncateTransfom(context, primaryKey));
+
+                     return handler;
+                  }).Named<IEntityDeleteHandler>(entity.Key);
+               }
+
 
             }
+         }
+      }
 
-            // entity input
-            foreach (var entity in process.Entities.Where(e => process.Connections.First(c => c.Name == e.Connection).Provider == Provider)) {
-
-                // INPUT READER
-                builder.Register<IRead>(ctx => {
-
-                    var input = ctx.ResolveNamed<InputContext>(entity.Key);
-                    var rowFactory = ctx.ResolveNamed<IRowFactory>(entity.Key, new NamedParameter("capacity", input.RowCapacity));
-                    var dataReader = new AdoInputReader(
-                        input,
-                        input.InputFields,
-                        ctx.ResolveNamed<IConnectionFactory>(input.Connection.Key),
-                        rowFactory
-                    );
-
-                    return dataReader;
-
-                }).Named<IRead>(entity.Key);
-
-                // INPUT VERSION DETECTOR
-                builder.Register<IInputProvider>(ctx => {
-                    var input = ctx.ResolveNamed<InputContext>(entity.Key);
-                    return new AdoInputProvider(input, ctx.ResolveNamed<IConnectionFactory>(input.Connection.Key));
-                }).Named<IInputProvider>(entity.Key);
-
-            }
-
-            // entity output
-            if (process.Output().Provider == Provider) {
-
-                var calc = process.ToCalculatedFieldsProcess();
-
-                // PROCESS OUTPUT CONTROLLER
-                builder.Register<IOutputController>(ctx => {
-                    var output = ctx.Resolve<OutputContext>();
-                    if (process.Mode != "init")
-                        return new NullOutputController();
-
-                    var actions = new List<IAction> { new AdoStarViewCreator(output, ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key)) };
-                    if (process.Flatten) {
-                        actions.Add(new AdoFlatTableCreator(output, ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key)));
-                    }
-                    return new AdoStarController(output, actions);
-                }).As<IOutputController>();
-
-                // PROCESS CALCULATED READER
-                builder.Register<IRead>(ctx => {
-                    var calcContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, calc.Entities.First());
-                    var outputContext = new OutputContext(calcContext);
-                    var cf = ctx.ResolveNamed<IConnectionFactory>(outputContext.Connection.Key);
-                    var capacity = outputContext.Entity.Fields.Count + outputContext.Entity.CalculatedFields.Count;
-                    var rowFactory = new RowFactory(capacity, false, false);
-                    return new AdoStarParametersReader(outputContext, process, cf, rowFactory);
-                }).As<IRead>();
-
-                // PROCESS CALCULATED FIELD WRITER
-                builder.Register<IWrite>(ctx => {
-                    var calcContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, calc.Entities.First());
-                    var outputContext = new OutputContext(calcContext);
-                    var cf = ctx.ResolveNamed<IConnectionFactory>(outputContext.Connection.Key);
-                    return new AdoCalculatedFieldUpdater(outputContext, process, cf);
-                }).As<IWrite>();
-
-                // PROCESS INITIALIZER
-                builder.Register<IInitializer>(ctx => {
-                    var output = ctx.Resolve<OutputContext>();
-                    return new AdoInitializer(output, ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key));
-                }).As<IInitializer>();
-
-                // ENTITIES
-                foreach (var entity in process.Entities) {
-
-                    builder.Register<IOutputProvider>(ctx => {
-
-                        var output = ctx.ResolveNamed<OutputContext>(entity.Key);
-                        var cf = ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key);
-                        var rowFactory = ctx.ResolveNamed<IRowFactory>(entity.Key, new NamedParameter("capacity", output.GetAllEntityFields().Count()));
-
-                        // matcher determines what's an update vs. and insert
-                        var matcher = entity.Update ? (IBatchReader)new AdoEntityMatchingKeysReader(output, cf, rowFactory) : new NullBatchReader();
-
-                        var writer = new AdoEntityWriter(
-                            output,
-                            matcher,
-                            new AdoEntityInserter(output, cf),
-                            entity.Update ? (IWrite)new AdoEntityUpdater(output, cf) : new NullWriter(output)
-                        );
-
-                        return new AdoOutputProvider(output, cf, writer);
-                    }).Named<IOutputProvider>(entity.Key);
-
-                    // ENTITY OUTPUT CONTROLLER
-                    builder.Register<IOutputController>(ctx => {
-
-                        var output = ctx.ResolveNamed<OutputContext>(entity.Key);
-                        var initializer = process.Mode == "init" ? (IAction)new AdoEntityInitializer(output, ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key)) : new NullInitializer();
-
-                        return new AdoOutputController(
-                            output,
-                            initializer,
-                            ctx.ResolveNamed<IInputProvider>(entity.Key),
-                            ctx.ResolveNamed<IOutputProvider>(entity.Key),
-                            ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key)
-                        );
-
-                    }).Named<IOutputController>(entity.Key);
-
-                    // MASTER UPDATE QUERY
-                    builder.Register<IWriteMasterUpdateQuery>(ctx => {
-                        var output = ctx.ResolveNamed<OutputContext>(entity.Key);
-                        var factory = ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key);
-                        return new PostgreSqlUpdateMasterKeysQueryWriter(output, factory);
-                    }).Named<IWriteMasterUpdateQuery>(entity.Key + "MasterKeys");
-
-                    // MASTER UPDATER
-                    builder.Register<IUpdate>(ctx => {
-                        var output = ctx.ResolveNamed<OutputContext>(entity.Key);
-                        return new AdoMasterUpdater(
-                            output,
-                            ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key),
-                            ctx.ResolveNamed<IWriteMasterUpdateQuery>(entity.Key + "MasterKeys")
-                        );
-                    }).Named<IUpdate>(entity.Key);
-
-                    // DELETE HANDLER
-                    if (entity.Delete) {
-
-                        // register input keys and hashcode reader if necessary
-                        builder.Register(ctx => {
-                            var inputContext = ctx.ResolveNamed<InputContext>(entity.Key);
-                            var rowCapacity = inputContext.Entity.GetPrimaryKey().Count();
-                            var rowFactory = new RowFactory(rowCapacity, false, true);
-
-                            return new AdoReader(
-                                inputContext,
-                                entity.GetPrimaryKey(),
-                                ctx.ResolveNamed<IConnectionFactory>(inputContext.Connection.Key),
-                                rowFactory,
-                                ReadFrom.Input
-                            );
-                        }).Named<IReadInputKeysAndHashCodes>(entity.Key);
-
-                        // register output keys and hash code reader if necessary
-                        builder.Register((ctx => {
-                            var context = ctx.ResolveNamed<OutputContext>(entity.Key);
-                            var rowCapacity = context.Entity.GetPrimaryKey().Count();
-                            var rowFactory = new RowFactory(rowCapacity, false, true);
-
-                            var outputConnection = process.Output();
-                            return new AdoReader(context, entity.GetPrimaryKey(), ctx.ResolveNamed<IConnectionFactory>(outputConnection.Key), rowFactory, ReadFrom.Output);
-
-                        })).Named<IReadOutputKeysAndHashCodes>(entity.Key);
-
-                        builder.Register(ctx => {
-                            var outputConnection = process.Output();
-                            var outputContext = ctx.ResolveNamed<OutputContext>(entity.Key);
-                            return new AdoDeleter(outputContext, ctx.ResolveNamed<IConnectionFactory>(outputConnection.Key));
-                        }).Named<IDelete>(entity.Key);
-
-                        builder.Register<IEntityDeleteHandler>(ctx => {
-                            var context = ctx.ResolveNamed<IContext>(entity.Key);
-                            var primaryKey = entity.GetPrimaryKey();
-
-                            var handler = new DefaultDeleteHandler(
-                                context,
-                                ctx.ResolveNamed<IReadInputKeysAndHashCodes>(entity.Key),
-                                ctx.ResolveNamed<IReadOutputKeysAndHashCodes>(entity.Key),
-                                ctx.ResolveNamed<IDelete>(entity.Key)
-                            );
-
-                            // since the primary keys from the input may have been transformed into the output, you have to transform before comparing
-                            // feels a lot like entity pipeline on just the primary keys... may look at consolidating
-                            handler.Register(new DefaultTransform(context, entity.GetPrimaryKey().ToArray()));
-                            handler.Register(TransformFactory.GetTransforms(ctx, context, primaryKey));
-                            handler.Register(new StringTruncateTransfom(context, primaryKey));
-
-                            return handler;
-                        }).Named<IEntityDeleteHandler>(entity.Key);
-                    }
-
-
-                }
-            }
-        }
-
-    }
+   }
 }
