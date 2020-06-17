@@ -63,7 +63,7 @@ namespace Transformalize.Providers.PostgreSql.Autofac {
          }
 
          // entity input
-         foreach (var entity in process.Entities.Where(e => process.Connections.First(c => c.Name == e.Connection).Provider == Provider)) {
+         foreach (var entity in process.Entities.Where(e => process.Connections.First(c => c.Name == e.Input).Provider == Provider)) {
 
             // INPUT READER
             builder.Register<IRead>(ctx => {
@@ -90,7 +90,7 @@ namespace Transformalize.Providers.PostgreSql.Autofac {
          }
 
          // entity output
-         if (process.Output().Provider == Provider) {
+         if (process.GetOutputConnection().Provider == Provider) {
 
             var calc = process.ToCalculatedFieldsProcess();
 
@@ -210,13 +210,13 @@ namespace Transformalize.Providers.PostgreSql.Autofac {
                      var rowCapacity = context.Entity.GetPrimaryKey().Count();
                      var rowFactory = new RowFactory(rowCapacity, false, true);
 
-                     var outputConnection = process.Output();
+                     var outputConnection = process.GetOutputConnection();
                      return new AdoReader(context, entity.GetPrimaryKey(), ctx.ResolveNamed<IConnectionFactory>(outputConnection.Key), rowFactory, ReadFrom.Output);
 
                   })).Named<IReadOutputKeysAndHashCodes>(entity.Key);
 
                   builder.Register(ctx => {
-                     var outputConnection = process.Output();
+                     var outputConnection = process.GetOutputConnection();
                      var outputContext = ctx.ResolveNamed<OutputContext>(entity.Key);
                      return new AdoDeleter(outputContext, ctx.ResolveNamed<IConnectionFactory>(outputConnection.Key));
                   }).Named<IDelete>(entity.Key);
