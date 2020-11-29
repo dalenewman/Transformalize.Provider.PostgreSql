@@ -33,16 +33,23 @@ namespace Transformalize.Providers.PostgreSql.Autofac {
    public class PostgreSqlModule : Module {
 
       private const string Provider = "postgresql";
+      private readonly Process _process;
 
       public Func<Connection, IConnectionFactory> ConnectionFactory { get; set; }
 
+      public PostgreSqlModule() { }
+
+      public PostgreSqlModule(Process process) {
+         _process = process;
+      }
+
       protected override void Load(ContainerBuilder builder) {
 
-         if (!builder.Properties.ContainsKey("Process")) {
+         if (_process == null && !builder.Properties.ContainsKey("Process")) {
             return;
          }
 
-         var process = (Process)builder.Properties["Process"];
+         var process = _process ?? (Process)builder.Properties["Process"];
 
          // connections
          foreach (var connection in process.Connections.Where(c => c.Provider == Provider)) {

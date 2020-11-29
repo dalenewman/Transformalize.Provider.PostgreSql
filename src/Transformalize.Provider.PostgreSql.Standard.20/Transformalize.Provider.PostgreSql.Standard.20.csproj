@@ -3,7 +3,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Transformalize.Providers.PostgreSql</RootNamespace>
     <AssemblyName>Transformalize.Provider.PostgreSql</AssemblyName>
-    <Version>0.8.29-beta</Version>
+    <Version>0.8.30-beta</Version>
   </PropertyGroup>
   <Import Project="..\Transformalize.Provider.PostgreSql.Shared\Transformalize.Provider.PostgreSql.Shared.projitems" Label="Shared" />
   <ItemGroup>

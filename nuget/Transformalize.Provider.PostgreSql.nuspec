@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>Transformalize.Provider.PostgreSql</id>
-    <version>0.8.29-beta</version>
+    <version>0.8.30-beta</version>
     <title>Transformalize Transform using PostgreSql</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>

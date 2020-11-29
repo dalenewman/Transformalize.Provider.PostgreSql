@@ -3,7 +3,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Transformalize.Providers.PostgreSql.Autofac</RootNamespace>
     <AssemblyName>Transformalize.Provider.PostgreSql.Autofac</AssemblyName>
-    <Version>0.8.29-beta</Version>
+    <Version>0.8.30-beta</Version>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Transformalize.Container.Autofac" Version="0.8.29-beta" />
