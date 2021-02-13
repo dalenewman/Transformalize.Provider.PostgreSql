@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>Transformalize.Provider.PostgreSql.Autofac</id>
-    <version>0.8.30-beta</version>
+    <version>0.8.34-beta</version>
     <title>Transformalize Transform using PostgreSql Autofac Module</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
@@ -10,17 +10,17 @@
     <projectUrl>https://github.com/dalenewman/Transformalize.Provider.PostgreSql</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Transformalize Transform using PostgreSql Autofac Module</description>
-    <releaseNotes>added .net standard 2.0 target</releaseNotes>
-    <copyright>Copyright 2018-2020</copyright>
+    <releaseNotes>enclosing all identifiers</releaseNotes>
+    <copyright>Copyright 2018-2021</copyright>
     <tags>etl</tags>
     <dependencies>
       <group targetFramework="net462">
-        <dependency id="Transformalize.Provider.PostgreSql" version="0.8.30-beta" />
-        <dependency id="Transformalize.Container.Autofac" version="0.8.29-beta" />
+        <dependency id="Transformalize.Provider.PostgreSql" version="0.8.34-beta" />
+        <dependency id="Transformalize.Container.Autofac" version="0.8.31-beta" />
       </group>
       <group targetFramework="netstandard2.0">
-        <dependency id="Transformalize.Provider.PostgreSql" version="0.8.30-beta" />
-        <dependency id="Transformalize.Container.Autofac" version="0.8.29-beta" />
+        <dependency id="Transformalize.Provider.PostgreSql" version="0.8.34-beta" />
+        <dependency id="Transformalize.Container.Autofac" version="0.8.31-beta" />
       </group>
     </dependencies>
   </metadata>
