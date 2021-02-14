@@ -31,7 +31,7 @@ namespace Test {
    [TestClass]
    public class Test {
 
-      private const string Pw = "devdev1!"; // 
+      private const string Pw = "Wr0ngP@$$w0rd!"; // 
 
       [TestMethod]
       public void Write() {
