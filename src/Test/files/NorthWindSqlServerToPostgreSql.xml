@@ -6,8 +6,8 @@
   </parameters>
 
   <connections>
-    <add name="input" connection-string="Server=localhost;Database=NorthWind;Trusted_Connection=True;" />
-    <add name="output" provider="postgresql" server="localhost" database="northwindstar" user="postgres" password="@[Password]" />
+    <add name="input" connection-string="Server=host.docker.internal;Database=NorthWind;User Id=sa;Password=@[Password];Encrypt=True;TrustServerCertificate=True" />
+    <add name="output" provider="postgresql" server="host.docker.internal" database="northwindstar" user="postgres" password="@[Password]" />
   </connections>
 
   <maps>

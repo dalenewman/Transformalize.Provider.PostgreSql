@@ -31,7 +31,7 @@ namespace Test {
    [TestClass]
    public class Test {
 
-      private const string Pw = "Wr0ngP@$$w0rd!"; // 
+      private const string Pw = "DevDev1!"; // Wr0ngP@$$w0rd! 
 
       [TestMethod]
       public void Write() {
@@ -42,7 +42,7 @@ namespace Test {
   </parameters>
   <connections>
     <add name='input' provider='bogus' seed='1' />
-    <add name='output' provider='postgresql' database='Junk' user='postgres' password='{Pw}' />
+    <add name='output' provider='postgresql' server='host.docker.internal' database='junk' user='postgres' password='{Pw}' />
   </connections>
   <entities>
     <add name='Contact' size='@[Size]'>
@@ -76,7 +76,7 @@ namespace Test {
       <add name='pw' value='*' />
    </parameters>
   <connections>
-    <add name='input' provider='postgresql' database='Junk' user='postgres' password='{Pw}' />
+    <add name='input' provider='postgresql' server='host.docker.internal' database='junk' user='postgres' password='{Pw}' />
     <add name='output' provider='internal' />
   </connections>
   <entities>

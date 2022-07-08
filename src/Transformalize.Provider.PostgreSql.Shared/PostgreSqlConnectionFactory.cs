@@ -893,6 +893,8 @@ namespace Transformalize.Providers.PostgreSql {
       }
 
       public IDbConnection GetConnection(string appName = null) {
+         // TODO: switch from bcl date types to noda time, see https://www.npgsql.org/doc/types/datetime.html
+         AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
          return new NpgsqlConnection(GetConnectionString(appName));
       }
 
@@ -908,7 +910,8 @@ namespace Transformalize.Providers.PostgreSql {
             Password = _c.Password,
             Username = _c.User,
             Port = _c.Port == 0 ? 5432 : _c.Port,
-            Timeout = _c.RequestTimeout
+            Timeout = _c.RequestTimeout,
+            
          }.ConnectionString;
 
          return _c.ConnectionString;
