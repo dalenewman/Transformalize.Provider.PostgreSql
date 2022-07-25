@@ -227,14 +227,14 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="Transformalize, Version=0.10.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Transformalize.0.10.0-beta\lib\net462\Transformalize.dll</HintPath>
+    <Reference Include="Transformalize, Version=0.10.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Transformalize.0.10.2-beta\lib\net462\Transformalize.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Container.Autofac, Version=0.10.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Transformalize.Container.Autofac.0.10.0-beta\lib\net462\Transformalize.Container.Autofac.dll</HintPath>
+    <Reference Include="Transformalize.Container.Autofac, Version=0.10.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Transformalize.Container.Autofac.0.10.2-beta\lib\net462\Transformalize.Container.Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Provider.Ado, Version=0.10.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Transformalize.Provider.Ado.0.10.0-beta\lib\net462\Transformalize.Provider.Ado.dll</HintPath>
+    <Reference Include="Transformalize.Provider.Ado, Version=0.10.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Transformalize.Provider.Ado.0.10.2-beta\lib\net462\Transformalize.Provider.Ado.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Provider.Bogus, Version=0.10.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Transformalize.Provider.Bogus.0.10.0-beta\lib\net462\Transformalize.Provider.Bogus.dll</HintPath>
@@ -245,11 +245,11 @@
     <Reference Include="Transformalize.Provider.Console, Version=0.10.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Transformalize.Provider.Console.0.10.0-beta\lib\net462\Transformalize.Provider.Console.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Provider.SqlServer, Version=0.8.33.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Transformalize.Provider.SqlServer.0.8.33-beta\lib\net462\Transformalize.Provider.SqlServer.dll</HintPath>
+    <Reference Include="Transformalize.Provider.SqlServer, Version=0.10.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Transformalize.Provider.SqlServer.0.10.1-beta\lib\net462\Transformalize.Provider.SqlServer.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Provider.SqlServer.Autofac, Version=0.8.33.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Transformalize.Provider.SqlServer.Autofac.0.8.33-beta\lib\net462\Transformalize.Provider.SqlServer.Autofac.dll</HintPath>
+    <Reference Include="Transformalize.Provider.SqlServer.Autofac, Version=0.10.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Transformalize.Provider.SqlServer.Autofac.0.10.1-beta\lib\net462\Transformalize.Provider.SqlServer.Autofac.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Transform.Jint, Version=0.10.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Transformalize.Transform.Jint.0.10.0-beta\lib\net462\Transformalize.Transform.Jint.dll</HintPath>
