@@ -34,8 +34,11 @@ namespace Test {
       private const string Pw = "DevDev1!"; // Wr0ngP@$$w0rd! 
 
       [TestMethod]
-      public void Write() {
-         var xml = $@"<add name='Bogus' mode='init'>
+      public void WriteThenRead() {
+
+         var logger = new ConsoleLogger(LogLevel.Debug);
+
+         var writeXml = $@"<add name='Bogus' mode='init'>
   <parameters>
     <add name='Size' type='int' value='1000' />
     <add name='pw' value='*' />
@@ -56,8 +59,7 @@ namespace Test {
     </add>
   </entities>
 </add>";
-         var logger = new ConsoleLogger(LogLevel.Debug);
-         using (var outer = new ConfigurationContainer().CreateScope(xml, logger)) {
+         using (var outer = new ConfigurationContainer().CreateScope(writeXml, logger)) {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new BogusModule(), new PostgreSqlModule()).CreateScope(process, logger)) {
 
@@ -67,11 +69,8 @@ namespace Test {
                Assert.AreEqual(process.Entities.First().Inserts, (uint)1000);
             }
          }
-      }
 
-      [TestMethod]
-      public void Read() {
-         var xml = $@"<add name='Bogus'>
+         var readXml = $@"<add name='Bogus'>
    <parameters>
       <add name='pw' value='*' />
    </parameters>
@@ -94,8 +93,7 @@ namespace Test {
     </add>
   </entities>
 </add>";
-         var logger = new ConsoleLogger(LogLevel.Debug);
-         using (var outer = new ConfigurationContainer().CreateScope(xml, logger)) {
+         using (var outer = new ConfigurationContainer().CreateScope(readXml, logger)) {
             var process = outer.Resolve<Process>();
 
             using (var inner = new Container(new PostgreSqlModule()).CreateScope(process, logger)) {
@@ -108,6 +106,8 @@ namespace Test {
 
             }
          }
+
       }
+
    }
 }

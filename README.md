@@ -1,7 +1,6 @@
 ### Overview
 
-This adds an `PostgreSql` provider to Transformalize using [Npgsql](https://www.nuget.org/packages/Npgsql).  
-It is a plug-in that ships with Transformalize CLI.
+This is a `PostgreSql` provider to [Transformalize](https://github.com/dalenewman/Transformalize) using [Npgsql](https://www.nuget.org/packages/Npgsql).
 
 ### Write Usage
 

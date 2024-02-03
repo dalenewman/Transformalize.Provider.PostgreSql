@@ -7,7 +7,7 @@
 
   <connections>
     <add name="input" connection-string="Server=host.docker.internal;Database=NorthWind;User Id=sa;Password=@[Password];Encrypt=True;TrustServerCertificate=True" />
-    <add name="output" provider="postgresql" server="host.docker.internal" database="northwindstar" user="postgres" password="@[Password]" />
+    <add name="output" provider="postgresql" server="host.docker.internal" database="northwind2" user="postgres" password="@[Password]" />
   </connections>
 
   <maps>
@@ -16,7 +16,7 @@
 
   <entities>
 
-    <add name="Order Details" version="RowVersion" prefix="OrderDetails">
+    <add name="Order Details" alias="OrderDetails" version="RowVersion" prefix="OrderDetails">
       <fields>
         <add name="Discount" type="single" ></add>
         <add name="OrderID" type="int" primary-key="true"></add>

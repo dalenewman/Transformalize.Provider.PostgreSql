@@ -18,7 +18,6 @@
 
 using Autofac;
 using Dapper;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Transformalize.Configuration;
 using Transformalize.Containers.Autofac;
 using Transformalize.Contracts;
@@ -46,7 +45,7 @@ namespace Test {
       public Connection OutputConnection { get; set; } = new Connection {
          Name = "output",
          Provider = "postgresql",
-         ConnectionString = $"Server=localhost;Port=5432;Database=northwindstar;User Id=postgres;Password={Password};"
+         ConnectionString = $"Server=localhost;Port=5432;Database=northwind2;User Id=postgres;Password={Password};"
       };
 
       [TestMethod]
@@ -75,7 +74,7 @@ namespace Test {
          using (var cn = new PostgreSqlConnectionFactory(OutputConnection).GetConnection()) {
             cn.Open();
             Assert.AreEqual(2155, cn.ExecuteScalar<int>("SELECT COUNT(*) FROM NorthWindStar;"));
-            Assert.AreEqual(2155, cn.ExecuteScalar<int>("SELECT Inserts FROM NorthWindControl WHERE Entity = 'Order Details' AND BatchId = 1 LIMIT 1;"));
+            Assert.AreEqual(2155, cn.ExecuteScalar<int>("SELECT Inserts FROM NorthWindControl WHERE Entity = 'OrderDetails' AND BatchId = 1 LIMIT 1;"));
          }
 
          // FIRST DELTA, NO CHANGES
@@ -90,7 +89,7 @@ namespace Test {
          using (var cn = new PostgreSqlConnectionFactory(OutputConnection).GetConnection()) {
             cn.Open();
             Assert.AreEqual(2155, cn.ExecuteScalar<int>("SELECT COUNT(*) FROM NorthWindStar;"));
-            Assert.AreEqual(0, cn.ExecuteScalar<int>("SELECT Inserts+Updates+Deletes FROM NorthWindControl WHERE Entity = 'Order Details' AND BatchId = 9 LIMIT 1;"));
+            Assert.AreEqual(0, cn.ExecuteScalar<int>("SELECT Inserts+Updates+Deletes FROM NorthWindControl WHERE Entity = 'OrderDetails' AND BatchId = 9 LIMIT 1;"));
          }
 
          // CHANGE 2 FIELDS IN 1 RECORD IN MASTER TABLE THAT WILL CAUSE CALCULATED FIELD TO BE UPDATED TOO 
@@ -110,7 +109,7 @@ namespace Test {
 
          using (var cn = new PostgreSqlConnectionFactory(OutputConnection).GetConnection()) {
             cn.Open();
-            Assert.AreEqual(1, cn.ExecuteScalar<int>("SELECT Updates FROM NorthWindControl WHERE Entity = 'Order Details' AND BatchId = 17 LIMIT 1;"));
+            Assert.AreEqual(1, cn.ExecuteScalar<int>("SELECT Updates FROM NorthWindControl WHERE Entity = 'OrderDetails' AND BatchId = 17 LIMIT 1;"));
             Assert.AreEqual(15.0M, cn.ExecuteScalar<decimal>("SELECT OrderDetailsUnitPrice FROM NorthWindStar WHERE OrderDetailsOrderID = 10253 AND OrderDetailsProductID = 39;"));
             Assert.AreEqual(40, cn.ExecuteScalar<int>("SELECT OrderDetailsQuantity FROM NorthWindStar WHERE OrderDetailsOrderID= 10253 AND OrderDetailsProductID = 39;"));
             Assert.AreEqual(15.0 * 40, cn.ExecuteScalar<int>("SELECT OrderDetailsExtendedPrice FROM NorthWindStar WHERE OrderDetailsOrderID= 10253 AND OrderDetailsProductID = 39;"));

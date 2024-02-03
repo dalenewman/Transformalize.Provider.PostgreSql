@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29926.136
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34511.84
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C4563C88-9C80-4BD0-949E-AA64F111957E}"
 	ProjectSection(SolutionItems) = preProject
@@ -17,70 +17,36 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nuget", "nuget", "{8FE1844F
 		nuget\Transformalize.Provider.PostgreSql.nuspec = nuget\Transformalize.Provider.PostgreSql.nuspec
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize.Provider.PostgreSql", "src\Transformalize.Provider.PostgreSql\Transformalize.Provider.PostgreSql.csproj", "{4ED1E259-756A-40B8-9800-F563B59E0206}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "src\Test\Test.csproj", "{59B253C4-097C-4D45-815C-D51E815A4F24}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize.Provider.PostgreSql.Autofac", "src\Transformalize.Provider.PostgreSql.Autofac\Transformalize.Provider.PostgreSql.Autofac.csproj", "{CD3477B9-14E5-4EA3-90B0-CA9299BCAE73}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Provider.PostgreSql", "src\Transformalize.Provider.PostgreSql\Transformalize.Provider.PostgreSql.csproj", "{0CC172FA-8D12-4E0F-B341-3D1425C3F87B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "src\Test\Test.csproj", "{55682FFB-39B0-46A4-BE91-934A1A69E7DC}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Provider", "Provider", "{E8253C1E-52B5-4CEB-A5D1-3F074DBCBEAC}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Provider.Autofac", "Provider.Autofac", "{407E6486-73CC-4837-8DDA-9B6A47AB0681}"
-EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Transformalize.Provider.PostgreSql.Shared", "src\Transformalize.Provider.PostgreSql.Shared\Transformalize.Provider.PostgreSql.Shared.shproj", "{303FF112-06E6-405F-BD5D-7860F4708387}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Provider.PostgreSql.Standard.20", "src\Transformalize.Provider.PostgreSql.Standard.20\Transformalize.Provider.PostgreSql.Standard.20.csproj", "{3678E57A-AE2B-41A3-82AE-390E90BE3E85}"
-EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Transformalize.Provider.PostgreSql.Autofac.Shared", "src\Transformalize.Provider.PostgreSql.Autofac.Shared\Transformalize.Provider.PostgreSql.Autofac.Shared.shproj", "{AD423420-F145-4EE4-9AD4-FAE1848EC37B}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Provider.PostgreSql.Autofac.Standard.20", "src\Transformalize.Provider.PostgreSql.Autofac.Standard.20\Transformalize.Provider.PostgreSql.Autofac.Standard.20.csproj", "{5EB66FBD-8AC6-43BD-9D3D-A6601FB6AAD9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Provider.PostgreSql.Autofac", "src\Transformalize.Provider.PostgreSql.Autofac\Transformalize.Provider.PostgreSql.Autofac.csproj", "{7F775B9B-3765-4D86-B424-6E96EA8620C1}"
 EndProject
 Global
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		src\Transformalize.Provider.PostgreSql.Shared\Transformalize.Provider.PostgreSql.Shared.projitems*{303ff112-06e6-405f-bd5d-7860f4708387}*SharedItemsImports = 13
-		src\Transformalize.Provider.PostgreSql.Shared\Transformalize.Provider.PostgreSql.Shared.projitems*{3678e57a-ae2b-41a3-82ae-390e90be3e85}*SharedItemsImports = 5
-		src\Transformalize.Provider.PostgreSql.Shared\Transformalize.Provider.PostgreSql.Shared.projitems*{4ed1e259-756a-40b8-9800-f563b59e0206}*SharedItemsImports = 4
-		src\Transformalize.Provider.PostgreSql.Autofac.Shared\Transformalize.Provider.PostgreSql.Autofac.Shared.projitems*{5eb66fbd-8ac6-43bd-9d3d-a6601fb6aad9}*SharedItemsImports = 5
-		src\Transformalize.Provider.PostgreSql.Autofac.Shared\Transformalize.Provider.PostgreSql.Autofac.Shared.projitems*{ad423420-f145-4ee4-9ad4-fae1848ec37b}*SharedItemsImports = 13
-		src\Transformalize.Provider.PostgreSql.Autofac.Shared\Transformalize.Provider.PostgreSql.Autofac.Shared.projitems*{cd3477b9-14e5-4ea3-90b0-ca9299bcae73}*SharedItemsImports = 4
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{4ED1E259-756A-40B8-9800-F563B59E0206}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4ED1E259-756A-40B8-9800-F563B59E0206}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4ED1E259-756A-40B8-9800-F563B59E0206}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4ED1E259-756A-40B8-9800-F563B59E0206}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CD3477B9-14E5-4EA3-90B0-CA9299BCAE73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CD3477B9-14E5-4EA3-90B0-CA9299BCAE73}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CD3477B9-14E5-4EA3-90B0-CA9299BCAE73}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CD3477B9-14E5-4EA3-90B0-CA9299BCAE73}.Release|Any CPU.Build.0 = Release|Any CPU
-		{55682FFB-39B0-46A4-BE91-934A1A69E7DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{55682FFB-39B0-46A4-BE91-934A1A69E7DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{55682FFB-39B0-46A4-BE91-934A1A69E7DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{55682FFB-39B0-46A4-BE91-934A1A69E7DC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3678E57A-AE2B-41A3-82AE-390E90BE3E85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3678E57A-AE2B-41A3-82AE-390E90BE3E85}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3678E57A-AE2B-41A3-82AE-390E90BE3E85}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3678E57A-AE2B-41A3-82AE-390E90BE3E85}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5EB66FBD-8AC6-43BD-9D3D-A6601FB6AAD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5EB66FBD-8AC6-43BD-9D3D-A6601FB6AAD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5EB66FBD-8AC6-43BD-9D3D-A6601FB6AAD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5EB66FBD-8AC6-43BD-9D3D-A6601FB6AAD9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59B253C4-097C-4D45-815C-D51E815A4F24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59B253C4-097C-4D45-815C-D51E815A4F24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59B253C4-097C-4D45-815C-D51E815A4F24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59B253C4-097C-4D45-815C-D51E815A4F24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CC172FA-8D12-4E0F-B341-3D1425C3F87B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CC172FA-8D12-4E0F-B341-3D1425C3F87B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CC172FA-8D12-4E0F-B341-3D1425C3F87B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CC172FA-8D12-4E0F-B341-3D1425C3F87B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F775B9B-3765-4D86-B424-6E96EA8620C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F775B9B-3765-4D86-B424-6E96EA8620C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F775B9B-3765-4D86-B424-6E96EA8620C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F775B9B-3765-4D86-B424-6E96EA8620C1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{8FE1844F-26A4-47BE-9507-F0333D42FABE} = {C4563C88-9C80-4BD0-949E-AA64F111957E}
-		{4ED1E259-756A-40B8-9800-F563B59E0206} = {E8253C1E-52B5-4CEB-A5D1-3F074DBCBEAC}
-		{CD3477B9-14E5-4EA3-90B0-CA9299BCAE73} = {407E6486-73CC-4837-8DDA-9B6A47AB0681}
-		{303FF112-06E6-405F-BD5D-7860F4708387} = {E8253C1E-52B5-4CEB-A5D1-3F074DBCBEAC}
-		{3678E57A-AE2B-41A3-82AE-390E90BE3E85} = {E8253C1E-52B5-4CEB-A5D1-3F074DBCBEAC}
-		{AD423420-F145-4EE4-9AD4-FAE1848EC37B} = {407E6486-73CC-4837-8DDA-9B6A47AB0681}
-		{5EB66FBD-8AC6-43BD-9D3D-A6601FB6AAD9} = {407E6486-73CC-4837-8DDA-9B6A47AB0681}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {960FC2FA-8CAD-47A3-8A4E-4173AE406E71}
