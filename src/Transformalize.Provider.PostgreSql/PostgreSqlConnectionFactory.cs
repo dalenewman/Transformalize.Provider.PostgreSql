@@ -906,12 +906,10 @@ namespace Transformalize.Providers.PostgreSql {
             ApplicationName = appName ?? Constants.ApplicationName,
             Database = _c.Database,
             Host = _c.Server,
-            IntegratedSecurity = _c.User == string.Empty && _c.Password == string.Empty,
             Password = _c.Password,
             Username = _c.User,
             Port = _c.Port == 0 ? 5432 : _c.Port,
             Timeout = _c.RequestTimeout,
-            
          }.ConnectionString;
 
          return _c.ConnectionString;
