@@ -17,8 +17,6 @@
 #endregion
 
 using Autofac;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Containers.Autofac;
 using Transformalize.Contracts;

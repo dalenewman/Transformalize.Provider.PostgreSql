@@ -3,12 +3,12 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Transformalize.Providers.PostgreSql</RootNamespace>
     <AssemblyName>Transformalize.Provider.PostgreSql</AssemblyName>
-    <Version>0.11.1-beta</Version>
-    <FileVersion>0.11.1</FileVersion>
-    <AssemblyVersion>0.11.1</AssemblyVersion>
+    <Version>0.11.2-beta</Version>
+    <FileVersion>0.11.2</FileVersion>
+    <AssemblyVersion>0.11.2</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Npgsql" Version="8.0.3" />
-    <PackageReference Include="Transformalize.Provider.Ado" Version="0.11.1-beta" />
+    <PackageReference Include="Transformalize.Provider.Ado" Version="0.11.2-beta" />
   </ItemGroup>
 </Project>
