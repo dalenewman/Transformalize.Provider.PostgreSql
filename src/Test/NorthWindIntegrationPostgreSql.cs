@@ -33,20 +33,21 @@ namespace Test {
    [TestClass]
    public class NorthWindIntegrationPostgreSql {
 
-      public string Cfg { get; set; } = @"Files\NorthWindSqlServerToPostgreSql.xml";
-      private const string Password = "DevDev1!"; // Wr0ngP@$$w0rd!
+      public string Cfg { get; set; } = @"files/NorthWindSqlServerToPostgreSql.xml";
 
       public Connection InputConnection { get; set; } = new Connection {
          Name = "input",
          Provider = "sqlserver",
-         ConnectionString = $"server=localhost;database=NorthWind;User Id=sa;Password={Password};Encrypt=True;TrustServerCertificate=True"
+         ConnectionString = Tester.GetSqlConnectionString("NorthWind")
       };
 
       public Connection OutputConnection { get; set; } = new Connection {
          Name = "output",
          Provider = "postgresql",
-         ConnectionString = $"Server=localhost;Port=5432;Database=northwind2;User Id=postgres;Password={Password};"
+         ConnectionString = Tester.GetPgConnectionString("northwind2")
       };
+
+      private string CfgParams => $"SqlServer={Tester.SqlServer}&SqlPort={Tester.SqlPort}&SqlUser={Tester.SqlUser}&SqlPw={Tester.Pw}&PgServer={Tester.PgServer}&PgPort={Tester.PgPort}&PgUser={Tester.PgUser}&PgPw={Tester.Pw}";
 
       [TestMethod]
       public void Integration() {
@@ -63,7 +64,7 @@ namespace Test {
             "));
          }
 
-         using (var outer = new ConfigurationContainer().CreateScope(Cfg + $"?Mode=init&Password={Password}", logger)) {
+         using (var outer = new ConfigurationContainer().CreateScope(Cfg + $"?Mode=init&{CfgParams}", logger)) {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new PostgreSqlModule(), new SqlServerModule(), new JintTransformModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
@@ -78,7 +79,7 @@ namespace Test {
          }
 
          // FIRST DELTA, NO CHANGES
-         using (var outer = new ConfigurationContainer().CreateScope(Cfg + $"?Password={Password}", logger)) {
+         using (var outer = new ConfigurationContainer().CreateScope(Cfg + $"?{CfgParams}", logger)) {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new PostgreSqlModule(), new SqlServerModule(), new JintTransformModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
@@ -99,7 +100,7 @@ namespace Test {
             Assert.AreEqual(1, cn.Execute(sql));
          }
 
-         using (var outer = new ConfigurationContainer().CreateScope(Cfg + $"?Password={Password}", logger)) {
+         using (var outer = new ConfigurationContainer().CreateScope(Cfg + $"?{CfgParams}", logger)) {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new PostgreSqlModule(), new SqlServerModule(), new JintTransformModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
@@ -121,7 +122,7 @@ namespace Test {
             Assert.AreEqual(1, cn.Execute("UPDATE Orders SET CustomerID = 'VICTE', Freight = 20.11 WHERE OrderId = 10254;"));
          }
 
-         using (var outer = new ConfigurationContainer().CreateScope(Cfg + $"?Password={Password}", logger)) {
+         using (var outer = new ConfigurationContainer().CreateScope(Cfg + $"?{CfgParams}", logger)) {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new PostgreSqlModule(), new SqlServerModule(), new JintTransformModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
