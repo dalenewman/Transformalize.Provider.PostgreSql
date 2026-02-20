@@ -62,7 +62,7 @@ namespace Test {
       private static async Task InitializeDatabases() {
          await using (var cn = new NpgsqlConnection(GetConnectionString("postgres"))) {
             await cn.OpenAsync();
-            foreach (var db in new[] { "northwind", "northwind2", "junk" }) {
+            foreach (var db in new[] { "northwind_source", "northwind_destination", "junk" }) {
                await using var check = new NpgsqlCommand(
                   $"SELECT COUNT(*) FROM pg_database WHERE datname = '{db}'", cn);
                var exists = (long)(await check.ExecuteScalarAsync())! > 0;
@@ -75,7 +75,7 @@ namespace Test {
          }
 
          Console.WriteLine("Loading Northwind schema and data...");
-         await ExecuteSqlFile("northwind-postgres.sql", "northwind");
+         await ExecuteSqlFile("northwind-postgres.sql", "northwind_source");
 
          Console.WriteLine("Northwind database ready");
       }

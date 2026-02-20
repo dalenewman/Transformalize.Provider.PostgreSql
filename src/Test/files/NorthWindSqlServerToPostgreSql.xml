@@ -9,8 +9,8 @@
   </parameters>
 
   <connections>
-    <add name="input" provider="postgresql" server="@[PgServer]" port="@[PgPort]" database="northwind" user="@[PgUser]" password="@[PgPw]" />
-    <add name="output" provider="postgresql" server="@[PgServer]" port="@[PgPort]" database="northwind2" user="@[PgUser]" password="@[PgPw]" />
+    <add name="input" provider="postgresql" server="@[PgServer]" port="@[PgPort]" database="northwind_source" user="@[PgUser]" password="@[PgPw]" />
+    <add name="output" provider="postgresql" server="@[PgServer]" port="@[PgPort]" database="northwind_destination" user="@[PgUser]" password="@[PgPw]" />
   </connections>
 
   <maps>

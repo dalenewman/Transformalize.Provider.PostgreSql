@@ -37,13 +37,13 @@ namespace Test {
       public Connection InputConnection { get; set; } = new Connection {
          Name = "input",
          Provider = "postgresql",
-         ConnectionString = Tester.GetConnectionString("northwind")
+         ConnectionString = Tester.GetConnectionString("northwind_source")
       };
 
       public Connection OutputConnection { get; set; } = new Connection {
          Name = "output",
          Provider = "postgresql",
-         ConnectionString = Tester.GetConnectionString("northwind2")
+         ConnectionString = Tester.GetConnectionString("northwind_destination")
       };
 
       private string CfgParams => $"PgServer={Tester.Server}&PgPort={Tester.Port}&PgUser={Tester.User}&PgPw={Tester.Pw}";
