@@ -40,7 +40,7 @@ namespace Test {
   </parameters>
   <connections>
     <add name='input' provider='bogus' seed='1' />
-    <add name='output' provider='postgresql' server='{Tester.PgServer}' port='{Tester.PgPort}' database='junk' user='{Tester.PgUser}' password='{Tester.Pw}' />
+    <add name='output' provider='postgresql' server='{Tester.Server}' port='{Tester.Port}' database='junk' user='{Tester.User}' password='{Tester.Pw}' />
   </connections>
   <entities>
     <add name='Contact' size='@[Size]'>
@@ -67,7 +67,7 @@ namespace Test {
 
          var readXml = $@"<add name='Bogus'>
   <connections>
-    <add name='input' provider='postgresql' server='{Tester.PgServer}' port='{Tester.PgPort}' database='junk' user='{Tester.PgUser}' password='{Tester.Pw}' />
+    <add name='input' provider='postgresql' server='{Tester.Server}' port='{Tester.Port}' database='junk' user='{Tester.User}' password='{Tester.Pw}' />
     <add name='output' provider='internal' />
   </connections>
   <entities>

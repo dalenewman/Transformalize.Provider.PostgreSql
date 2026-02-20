@@ -13,16 +13,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="files\instnwnd.sql" />
-    <None Remove="files\northwind-rowversion.sql" />
+    <None Remove="files\northwind-postgres.sql" />
     <None Remove="files\NorthWindSqlServerToPostgreSql.xml" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="files\instnwnd.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="files\northwind-rowversion.sql">
+    <Content Include="files\northwind-postgres.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="files\NorthWindSqlServerToPostgreSql.xml">
@@ -31,7 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="3.7.1" />
     <PackageReference Include="MSTest.TestFramework" Version="3.7.1" />
@@ -40,11 +35,9 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Npgsql" Version="8.0.3" />
-    <PackageReference Include="Testcontainers.MsSql" Version="4.6.0" />
     <PackageReference Include="Testcontainers.PostgreSql" Version="4.6.0" />
     <PackageReference Include="Transformalize.Provider.Bogus.Autofac" Version="0.11.1-beta" />
     <PackageReference Include="Transformalize.Provider.Console.Autofac" Version="0.11.1-beta" />
-    <PackageReference Include="Transformalize.Provider.SqlServer.Autofac" Version="0.11.2-beta" />
     <PackageReference Include="Transformalize.Transform.Jint.Autofac" Version="0.11.2-beta" />
   </ItemGroup>
 
